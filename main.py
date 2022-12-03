@@ -14,6 +14,7 @@ from pyCryptoPayAPI import pyCryptoPayAPI
 import json
 vakt = date.today()
 
+
 client = pyCryptoPayAPI(api_token=TOKEN_CRYPTO)
 # Включить ведение журнала
 logging.basicConfig(
