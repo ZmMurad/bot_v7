@@ -135,7 +135,7 @@ def check_callback_data(callback):
         pay50 = types.InlineKeyboardButton("50 поисков - $10", callback_data="pay50")
 
 
-        markup.add(back, pay10, 20)
+        markup.add(back, pay10, pay20, pay30, pay40, pay50)
         msg = bot.edit_message_text(chat_id=callback.message.chat.id,  message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
         bot.register_next_step_handler(msg, parser)
 
