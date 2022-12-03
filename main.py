@@ -125,13 +125,16 @@ def check_callback_data(callback):
 
     elif callback.data == 'addbalance':
         markup = types.InlineKeyboardMarkup(row_width=2)
-        back = types.InlineKeyboardButton(
-            "⬅️ Назад в меню", callback_data="back")
-        pay = types.InlineKeyboardButton(
-            "Оплата криптовалютой", callback_data="pay")
-        markup.add(back, pay)
-        msg = bot.edit_message_text(chat_id=callback.message.chat.id,
-                                    message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
+        back = types.InlineKeyboardButton( "⬅️ Назад в меню", callback_data="back")
+        pay10 = types.InlineKeyboardButton("10 поисков - $2", callback_data="pay10")
+        pay20 = types.InlineKeyboardButton("20 поисков - $4", callback_data="pay20")
+        pay30 = types.InlineKeyboardButton("30 поисков - $6", callback_data="pay30")
+        pay40 = types.InlineKeyboardButton("40 поисков - $8", callback_data="pay40")
+        pay50 = types.InlineKeyboardButton("50 поисков - $10", callback_data="pay50")
+
+
+        markup.add(back, pay10, pay20, pay30, pay40, pay50)
+        msg = bot.edit_message_text(chat_id=callback.message.chat.id,  message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
         bot.register_next_step_handler(msg, parser)
 
     elif callback.data == 'parsers':
