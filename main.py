@@ -139,6 +139,13 @@ def check_callback_data(callback):
         msg = bot.edit_message_text(chat_id=callback.message.chat.id,  message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
         bot.register_next_step_handler(msg, parser)
 
+    elif callback.data == 'pay10':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        btc = types.InlineKeyboardButton("BTC", callback_data="btc")
+        markup.add(btc)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+                                    text="Оплата криптовалютой", reply_markup=markup)
+
     elif callback.data == 'parsers':
         if payments_id_user[str_id][NAME_PARS_COUNT]>0:
             markup = types.InlineKeyboardMarkup(row_width=1)
