@@ -124,7 +124,7 @@ def check_callback_data(callback):
         markup.add(balance, addbalance, parsers, faq)
         bot.edit_message_text(chat_id=callback.message.chat.id,
                               message_id=callback.message.id, text="Выберите меню", reply_markup=markup)
-
+ 
     elif callback.data == 'addbalance':
         markup = types.InlineKeyboardMarkup(row_width=2)
         back = types.InlineKeyboardButton( "⬅️ Назад в меню", callback_data="back")
@@ -141,10 +141,55 @@ def check_callback_data(callback):
 
     elif callback.data == 'pay10':
         markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton("⬅️ Назад в меню", callback_data="back")
         btc = types.InlineKeyboardButton("BTC", callback_data="btc")
-        markup.add(btc)
-        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
-                                    text="Оплата криптовалютой", reply_markup=markup)
+        eth = types.InlineKeyboardButton("ЕTH", callback_data="eth")
+        bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
+        usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
+        markup.add(btc, eth, bnb, usdt, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
+
+
+    elif callback.data == 'pay20':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton("⬅️ Назад в меню", callback_data="back")
+        btc = types.InlineKeyboardButton("BTC", callback_data="btc")
+        eth = types.InlineKeyboardButton("ЕTH", callback_data="eth")
+        bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
+        usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
+        markup.add(btc, eth, bnb, usdt, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
+
+    elif callback.data == 'pay30':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton("⬅️ Назад в меню", callback_data="back")
+        btc = types.InlineKeyboardButton("BTC", callback_data="btc")
+        eth = types.InlineKeyboardButton("ЕTH", callback_data="eth")
+        bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
+        usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
+        markup.add(btc, eth, bnb, usdt, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
+
+    elif callback.data == 'pay40':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton("⬅️ Назад в меню", callback_data="back")
+        btc = types.InlineKeyboardButton("BTC", callback_data="btc")
+        eth = types.InlineKeyboardButton("ЕTH", callback_data="eth")
+        bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
+        usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
+        markup.add(btc, eth, bnb, usdt, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
+
+    elif callback.data == 'pay50':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton("⬅️ Назад в меню", callback_data="back")
+        btc = types.InlineKeyboardButton("BTC", callback_data="btc")
+        eth = types.InlineKeyboardButton("ЕTH", callback_data="eth")
+        bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
+        usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
+        markup.add(btc, eth, bnb, usdt, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
+
 
     elif callback.data == 'parsers':
         if payments_id_user[str_id][NAME_PARS_COUNT]>0:
