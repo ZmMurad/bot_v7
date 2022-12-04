@@ -39,33 +39,36 @@ except:
 bot = telebot.TeleBot(tconfig.token)
 
 
-
 user_id = ''
 alllinkph = ''
 allphoto = ''
 translator = googletrans.Translator()
 id_admin = 487176253
 user_username = ''
-str_id=str(user_id)
+str_id = str(user_id)
+
+
 def get_id(message):
     global user_id, str_id
     user_id = message.from_user.id
-    str_id=str(user_id)
+    str_id = str(user_id)
     write_to_json(user_id)
 
+
 def write_to_json(user_id):
-    if str_id not in payments_id_user.keys():       
-        with open("user_db.json","w") as file:          
-            payments_id_user[str_id]=dict()
-            payments_id_user[str_id][NAME_PARS_COUNT]=1
-            json.dump(payments_id_user,file)
+    if str_id not in payments_id_user.keys():
+        with open("user_db.json", "w") as file:
+            payments_id_user[str_id] = dict()
+            payments_id_user[str_id][NAME_PARS_COUNT] = 1
+            json.dump(payments_id_user, file)
 
 
 def succesfull_pars():
     with open("user_db.json", "w") as file:
-        payments_id_user[str_id][NAME_PARS_COUNT]-=1
-        
-        json.dump(payments_id_user,file)
+        payments_id_user[str_id][NAME_PARS_COUNT] -= 1
+
+        json.dump(payments_id_user, file)
+
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -74,7 +77,7 @@ def start(message):
     global str_id
     get_id(message)
     user_username = message.from_user.username
-    
+
     if user_id == id_admin:
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         plus = types.KeyboardButton("+")
@@ -98,11 +101,9 @@ def start(message):
 @bot.callback_query_handler(func=lambda callback: callback.data)
 def check_callback_data(callback):
     get_id(callback)
-    
+
     if callback.data == 'balance':
-        
-        
-        
+
         markup = types.InlineKeyboardMarkup(row_width=2)
         back = types.InlineKeyboardButton(
             "⬅️ Назад в меню", callback_data='back')
@@ -112,7 +113,7 @@ def check_callback_data(callback):
         bot.register_next_step_handler(msg, parser)
 
     elif callback.data == 'back':
-        
+
         markup = types.InlineKeyboardMarkup(row_width=2)
         balance = types.InlineKeyboardButton(
             "💵Баланс💵 ", callback_data="balance")
@@ -124,83 +125,97 @@ def check_callback_data(callback):
         markup.add(balance, addbalance, parsers, faq)
         bot.edit_message_text(chat_id=callback.message.chat.id,
                               message_id=callback.message.id, text="Выберите меню", reply_markup=markup)
- 
+
     elif callback.data == 'addbalance':
         markup = types.InlineKeyboardMarkup(row_width=2)
-        back = types.InlineKeyboardButton( "⬅️ Назад в меню", callback_data="back")
-        pay10 = types.InlineKeyboardButton("10 поисков - $2", callback_data="pay10")
-        pay20 = types.InlineKeyboardButton("20 поисков - $4", callback_data="pay20")
-        pay30 = types.InlineKeyboardButton("30 поисков - $6", callback_data="pay30")
-        pay40 = types.InlineKeyboardButton("40 поисков - $8", callback_data="pay40")
-        pay50 = types.InlineKeyboardButton("50 поисков - $10", callback_data="pay50")
-
+        back = types.InlineKeyboardButton(
+            "⬅️ Назад в меню", callback_data="back")
+        pay10 = types.InlineKeyboardButton(
+            "10 поисков - $2", callback_data="pay10")
+        pay20 = types.InlineKeyboardButton(
+            "20 поисков - $4", callback_data="pay20")
+        pay30 = types.InlineKeyboardButton(
+            "30 поисков - $6", callback_data="pay30")
+        pay40 = types.InlineKeyboardButton(
+            "40 поисков - $8", callback_data="pay40")
+        pay50 = types.InlineKeyboardButton(
+            "50 поисков - $10", callback_data="pay50")
 
         markup.add(back, pay10, pay20, pay30, pay40, pay50)
-        msg = bot.edit_message_text(chat_id=callback.message.chat.id,  message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
+        msg = bot.edit_message_text(chat_id=callback.message.chat.id,
+                                    message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
         bot.register_next_step_handler(msg, parser)
 
     elif callback.data == 'pay10':
         markup = types.InlineKeyboardMarkup(row_width=2)
-        back = types.InlineKeyboardButton("⬅️ Назад в меню", callback_data="back")
+        back = types.InlineKeyboardButton(
+            "⬅️ Назад в меню", callback_data="back")
         btc = types.InlineKeyboardButton("BTC", callback_data="btc")
         eth = types.InlineKeyboardButton("ЕTH", callback_data="eth")
         bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
         usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
         markup.add(btc, eth, bnb, usdt, back)
-        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
-
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+                              text="Оплата криптовалютой", reply_markup=markup)
 
     elif callback.data == 'pay20':
         markup = types.InlineKeyboardMarkup(row_width=2)
-        back = types.InlineKeyboardButton("⬅️ Назад в меню", callback_data="back")
+        back = types.InlineKeyboardButton(
+            "⬅️ Назад в меню", callback_data="back")
         btc = types.InlineKeyboardButton("BTC", callback_data="btc")
         eth = types.InlineKeyboardButton("ЕTH", callback_data="eth")
         bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
         usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
         markup.add(btc, eth, bnb, usdt, back)
-        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+                              text="Оплата криптовалютой", reply_markup=markup)
 
     elif callback.data == 'pay30':
         markup = types.InlineKeyboardMarkup(row_width=2)
-        back = types.InlineKeyboardButton("⬅️ Назад в меню", callback_data="back")
+        back = types.InlineKeyboardButton(
+            "⬅️ Назад в меню", callback_data="back")
         btc = types.InlineKeyboardButton("BTC", callback_data="btc")
         eth = types.InlineKeyboardButton("ЕTH", callback_data="eth")
         bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
         usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
         markup.add(btc, eth, bnb, usdt, back)
-        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+                              text="Оплата криптовалютой", reply_markup=markup)
 
     elif callback.data == 'pay40':
         markup = types.InlineKeyboardMarkup(row_width=2)
-        back = types.InlineKeyboardButton("⬅️ Назад в меню", callback_data="back")
+        back = types.InlineKeyboardButton(
+            "⬅️ Назад в меню", callback_data="back")
         btc = types.InlineKeyboardButton("BTC", callback_data="btc")
         eth = types.InlineKeyboardButton("ЕTH", callback_data="eth")
         bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
         usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
         markup.add(btc, eth, bnb, usdt, back)
-        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+                              text="Оплата криптовалютой", reply_markup=markup)
 
     elif callback.data == 'pay50':
         markup = types.InlineKeyboardMarkup(row_width=2)
-        back = types.InlineKeyboardButton("⬅️ Назад в меню", callback_data="back")
+        back = types.InlineKeyboardButton(
+            "⬅️ Назад в меню", callback_data="back")
         btc = types.InlineKeyboardButton("BTC", callback_data="btc")
         eth = types.InlineKeyboardButton("ЕTH", callback_data="eth")
         bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
         usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
         markup.add(btc, eth, bnb, usdt, back)
-        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
-
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+                              text="Оплата криптовалютой", reply_markup=markup)
 
     elif callback.data == 'parsers':
-        if payments_id_user[str_id][NAME_PARS_COUNT]>0:
+        if payments_id_user[str_id][NAME_PARS_COUNT] > 0:
             markup = types.InlineKeyboardMarkup(row_width=1)
             back = types.InlineKeyboardButton(
                 "⬅️ Назад в меню", callback_data="back")
             markup.add(back)
             bot.edit_message_text(chat_id=callback.message.chat.id,
-                                message_id=callback.message.id, text="Парсинг", reply_markup=markup)
+                                  message_id=callback.message.id, text="Парсинг", reply_markup=markup)
             msg = bot.send_message(chat_id=callback.message.chat.id,
-                                text="Отправь боту ссылку", reply_markup=None)
+                                   text="Отправь боту ссылку", reply_markup=None)
             bot.register_next_step_handler(msg, parser)
         else:
             markup = types.InlineKeyboardMarkup(row_width=1)
@@ -208,9 +223,9 @@ def check_callback_data(callback):
                 "⬅️ Назад в меню", callback_data="back")
             markup.add(back)
             bot.edit_message_text(chat_id=callback.message.chat.id,
-                                message_id=callback.message.id, text="Количество поисков закончилось", reply_markup=markup)
+                                  message_id=callback.message.id, text="Количество поисков закончилось", reply_markup=markup)
             msg = bot.send_message(chat_id=callback.message.chat.id,
-                                text="Количество поисков закончилось", reply_markup=None)
+                                   text="Количество поисков закончилось", reply_markup=None)
 
     elif callback.data == 'faq':
         markup = types.InlineKeyboardMarkup(row_width=2)
@@ -340,12 +355,13 @@ def parser(message):
             # sendDocument
             f = open("user-" + str(user_id) + "/" + "description.txt", "rb")
             bot.send_document(message.chat.id, f)
-            bot.send_message(message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
+            bot.send_message(
+                message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
             f.close()
             # Удаления файла
             path_description = os.path.join(os.path.abspath(
                 os.path.dirname(__file__)), "user-" + str(user_id))
-            
+
             start(message)
 
             bot.send_message(id_admin, parlink)
@@ -423,7 +439,8 @@ def parser(message):
             # sendDocument
             f = open("user-" + str(user_id) + "/" + "description.txt", "rb")
             bot.send_document(message.chat.id, f)
-            bot.send_message(message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
+            bot.send_message(
+                message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
             f.close()
             # Удаления файла
             path = os.path.join(os.path.abspath(
@@ -443,7 +460,7 @@ def parser(message):
             message.chat.id, text="Отправь боту ссылку из списка..😕😕😕😕😕😕😕😕😕😕😕😕")
         start(message)
     succesfull_pars()
-    
+
 
 def newsletter(message):
     newsletter = message.text
