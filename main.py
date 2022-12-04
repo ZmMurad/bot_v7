@@ -206,6 +206,40 @@ def check_callback_data(callback):
         bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
                               text="Оплата криптовалютой", reply_markup=markup)
 
+    elif callback.data == 'btc':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton("❌Отмена❌", callback_data="back")
+        pays = types.InlineKeyboardButton("💵Оплатить💵", callback_data="pays")
+        markup.add(pays, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+                              text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)
+                              
+    elif callback.data == 'eth':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton("❌Отмена❌", callback_data="back")
+        pays = types.InlineKeyboardButton("💵Оплатить💵", callback_data="pays")
+        markup.add(pays, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+                              text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)
+
+    elif callback.data == 'bnb':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton("❌Отмена❌", callback_data="back")
+        pays = types.InlineKeyboardButton("💵Оплатить💵", callback_data="pays")
+        markup.add(pays, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+                              text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)  
+
+
+    elif callback.data == 'usdt':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton(
+            "❌Отмена❌", callback_data="back")
+        usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
+        markup.add(pays, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+                              text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)
+
     elif callback.data == 'parsers':
         if payments_id_user[str_id][NAME_PARS_COUNT] > 0:
             markup = types.InlineKeyboardMarkup(row_width=1)
