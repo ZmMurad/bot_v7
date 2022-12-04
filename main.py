@@ -300,7 +300,8 @@ def func(message):
 def parser(message):
     while True:
         parlink = message.text
-
+        if "http" not in parlink:
+            parlink = "http://" + parlink
         if parlink.startswith("http"):
             break
         else:
@@ -317,8 +318,6 @@ def parser(message):
         else:
             break
     if 'vinted' in parlink:
-        if "http" not in parlink:
-            parlink = "http://"+parlink
         r = requests.get(parlink, headers=HEADERS)
         soup = bs(r.text, 'html.parser')
         bot.send_message(
@@ -403,9 +402,6 @@ def parser(message):
         browser.get(parlink)
         photograiled = 'https://process.fs.grailed.com/AJdAgnqCST4iPtnUxiGtTz/auto_image/cache=expiry:max/rotate=deg:exif/resize=height:2560,width:1440/output=quality:90/compress/'
         soupselenium = bs(browser.page_source, "html.parser")
-
-        if "http" not in parlink:
-            parlink = "http://"+parlink
         bot.send_message(
             message.chat.id, text="Скачивание началось, подождите")
         listdesc = []
