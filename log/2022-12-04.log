@@ -1669,3 +1669,9 @@ telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsucc
 18:28:13,12 urllib3.connectionpool DEBUG https://api.telegram.org:443 "GET /bot5935213673:AAGWYHjFy-t9Ehnt9tA0OnOfwJh4EUeoJ0g/getUpdates?offset=597068040&timeout=20 HTTP/1.1" 200 23
 18:28:33,153 urllib3.connectionpool DEBUG https://api.telegram.org:443 "GET /bot5762424014:AAGkn7roO6pKNUVrcbL3o6EoSlT4peqny8o/getUpdates?offset=779213680&timeout=20 HTTP/1.1" 200 23
 18:28:33,173 urllib3.connectionpool DEBUG https://api.telegram.org:443 "GET /bot5935213673:AAGWYHjFy-t9Ehnt9tA0OnOfwJh4EUeoJ0g/getUpdates?offset=597068040&timeout=20 HTTP/1.1" 200 23
+18:28:53,456 urllib3.connectionpool DEBUG https://api.telegram.org:443 "GET /bot5762424014:AAGkn7roO6pKNUVrcbL3o6EoSlT4peqny8o/getUpdates?offset=779213680&timeout=20 HTTP/1.1" 200 23
+18:28:53,522 urllib3.connectionpool DEBUG https://api.telegram.org:443 "GET /bot5935213673:AAGWYHjFy-t9Ehnt9tA0OnOfwJh4EUeoJ0g/getUpdates?offset=597068040&timeout=20 HTTP/1.1" 200 23
+18:29:13,725 urllib3.connectionpool DEBUG https://api.telegram.org:443 "GET /bot5762424014:AAGkn7roO6pKNUVrcbL3o6EoSlT4peqny8o/getUpdates?offset=779213680&timeout=20 HTTP/1.1" 200 23
+18:29:13,731 urllib3.connectionpool DEBUG https://api.telegram.org:443 "GET /bot5935213673:AAGWYHjFy-t9Ehnt9tA0OnOfwJh4EUeoJ0g/getUpdates?offset=597068040&timeout=20 HTTP/1.1" 200 23
+18:29:13,736 urllib3.connectionpool DEBUG Starting new HTTPS connection (1): api.telegram.org:443
+18:29:13,736 urllib3.connectionpool DEBUG Starting new HTTPS connection (1): api.telegram.org:443

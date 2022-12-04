@@ -108,9 +108,9 @@ def check_callback_data(callback):
         back = types.InlineKeyboardButton(
             "⬅️ Назад в меню", callback_data='back')
         markup.add(back)
-        msg = bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
                                     text=f'👤 Ваш id:{str_id}   \n\n🔎 Осталось количество поисков:  {payments_id_user[str_id][NAME_PARS_COUNT]}', reply_markup=markup)
-        bot.register_next_step_handler(msg, parser)
+
 
     elif callback.data == 'back':
 
@@ -142,9 +142,9 @@ def check_callback_data(callback):
             "50 поисков - $10", callback_data="pay50")
 
         markup.add(back, pay10, pay20, pay30, pay40, pay50)
-        msg = bot.edit_message_text(chat_id=callback.message.chat.id,
+        bot.edit_message_text(chat_id=callback.message.chat.id,
                                     message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
-        bot.register_next_step_handler(msg, parser)
+
 
     elif callback.data == 'pay10':
         markup = types.InlineKeyboardMarkup(row_width=2)
@@ -235,7 +235,7 @@ def check_callback_data(callback):
         markup = types.InlineKeyboardMarkup(row_width=2)
         back = types.InlineKeyboardButton(
             "❌Отмена❌", callback_data="back")
-        usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
+        pays = types.InlineKeyboardButton("💵Оплатить💵", callback_data="pays")
         markup.add(pays, back)
         bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
                               text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)
