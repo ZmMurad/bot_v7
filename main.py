@@ -203,42 +203,36 @@ def check_callback_data(callback):
         bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
         usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
         markup.add(btc, eth, bnb, usdt, back)
-        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
-                              text="Оплата криптовалютой", reply_markup=markup)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
 
     elif callback.data == 'btc':
         markup = types.InlineKeyboardMarkup(row_width=2)
         back = types.InlineKeyboardButton("❌Отмена❌", callback_data="back")
-        pays = types.InlineKeyboardButton("💵Оплатить💵", callback_data="pays")
+        pays = types.InlineKeyboardButton("💵Оплатить💵", url='https://t.me/CryptoBot?start=IV8k5dokl9Az')
         markup.add(pays, back)
-        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
-                              text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)
                               
     elif callback.data == 'eth':
         markup = types.InlineKeyboardMarkup(row_width=2)
         back = types.InlineKeyboardButton("❌Отмена❌", callback_data="back")
         pays = types.InlineKeyboardButton("💵Оплатить💵", callback_data="pays")
         markup.add(pays, back)
-        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
-                              text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)
 
     elif callback.data == 'bnb':
         markup = types.InlineKeyboardMarkup(row_width=2)
         back = types.InlineKeyboardButton("❌Отмена❌", callback_data="back")
         pays = types.InlineKeyboardButton("💵Оплатить💵", callback_data="pays")
         markup.add(pays, back)
-        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
-                              text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)  
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)
 
 
     elif callback.data == 'usdt':
         markup = types.InlineKeyboardMarkup(row_width=2)
-        back = types.InlineKeyboardButton(
-            "❌Отмена❌", callback_data="back")
+        back = types.InlineKeyboardButton("❌Отмена❌", callback_data="back")
         pays = types.InlineKeyboardButton("💵Оплатить💵", callback_data="pays")
         markup.add(pays, back)
-        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
-                              text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)
 
     elif callback.data == 'parsers':
         if payments_id_user[str_id][NAME_PARS_COUNT] > 0:
@@ -263,14 +257,11 @@ def check_callback_data(callback):
 
     elif callback.data == 'faq':
         markup = types.InlineKeyboardMarkup(row_width=2)
-        back = types.InlineKeyboardButton(
-            "⬅️ Назад в меню", callback_data="back")
-        btn_my_site = types.InlineKeyboardButton(
-            text='Перейти', url='https://t.me/Rick_pars')
+        back = types.InlineKeyboardButton( "⬅️ Назад в меню", callback_data="back")
+        btn_my_site = types.InlineKeyboardButton(text='Перейти', url='https://t.me/Rick_pars')
         markup.add(back, btn_my_site)
-        msg = bot.edit_message_text(chat_id=callback.message.chat.id,
+        bot.edit_message_text(chat_id=callback.message.chat.id,
                                     message_id=callback.message.id, text="Написать админу", reply_markup=markup)
-        bot.register_next_step_handler(msg, parser)
 
 
 @bot.message_handler(content_types=['text'])
