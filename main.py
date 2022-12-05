@@ -13,8 +13,6 @@ from datetime import date
 from pyCryptoPayAPI import pyCryptoPayAPI
 import json
 vakt = date.today()
-
-
 client = pyCryptoPayAPI(api_token=TOKEN_CRYPTO)
 # Включить ведение журнала
 logging.basicConfig(
@@ -84,18 +82,14 @@ def start(message):
         minus = types.KeyboardButton("-")
         newsletter = types.KeyboardButton("Рассылка")
         markup.add(plus, minus, newsletter)
-        bot.send_message(
-            message.chat.id, text="Братишка коро чхе ", reply_markup=markup)
-
+        bot.send_message(message.chat.id, text="Братишка коро чхе ", reply_markup=markup)
     markup = types.InlineKeyboardMarkup(row_width=2)
     balance = types.InlineKeyboardButton("💵Баланс💵 ", callback_data="balance")
-    addbalance = types.InlineKeyboardButton(
-        "💰Пополнить баланс💰", callback_data="addbalance")
+    addbalance = types.InlineKeyboardButton("💰Пополнить баланс💰", callback_data="addbalance")
     parsers = types.InlineKeyboardButton("🌐Парсинг🌐", callback_data="parsers")
     faq = types.InlineKeyboardButton("Задать вопрос❓", callback_data="faq")
     markup.add(balance, addbalance, parsers, faq)
-    bot.send_message(message.chat.id, text="Выберите меню",
-                     reply_markup=markup)
+    bot.send_message(message.chat.id, text="Выберите меню", reply_markup=markup)
 
 
 @bot.callback_query_handler(func=lambda callback: callback.data)
@@ -109,7 +103,7 @@ def check_callback_data(callback):
             "⬅️ Назад в меню", callback_data='back')
         markup.add(back)
         bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
-                                    text=f'👤 Ваш id:{str_id}   \n\n🔎 Осталось количество поисков:  {payments_id_user[str_id][NAME_PARS_COUNT]}', reply_markup=markup)
+                                    text=f'👤 Ваш id:  {str_id}   \n\n🔎 Осталось количество поисков:  {payments_id_user[str_id][NAME_PARS_COUNT]}', reply_markup=markup)
 
 
     elif callback.data == 'back':
@@ -320,82 +314,66 @@ def parser(message):
     if 'vinted' in parlink:
         r = requests.get(parlink, headers=HEADERS)
         soup = bs(r.text, 'html.parser')
-        bot.send_message(
-            message.chat.id, text="Скачивание началось, подождите")
+        bot.send_message(message.chat.id, text="Скачивание началось, подождите")
         for photo in soup.findAll('a', class_='item-thumbnail'):
             global alllinkph
             alllinkph = photo.get('href')
+            print(alllinkph)
             bot.send_document(message.chat.id, alllinkph)
-
-        listdesc = []
-        listdesc1 = ['Название', 'Описание', 'Цена', ]
-        # Получение информации о title  # Получение информации о description
-        for photo in soup.findAll('div', class_='details-list details-list--info'):
-            alllinkph = photo.find(
-                'script', class_='js-react-on-rails-component').get_text()
-            gettitle = alllinkph.split('"')[7]
-            getdesc = alllinkph.split('"')[11].replace("\\n", ' ')
-            listdesc.append(gettitle)
-            listdesc.append(getdesc)
-
-        # Получение информации о цене
-        for photo in soup.findAll('div', class_='details-list details-list--main-info'):
-            pricebrand = photo.find(
-                'script', class_='js-react-on-rails-component').get_text().split('"')[7]
-            listdesc.append(pricebrand)
-        #  #######Получение информации о размепе бренле
-        for photo1 in soup.findAll('div', class_='details-list__item-value'):
-            desc11 = (photo1.get_text().replace(" ", ""))
-            listdesc.append(
-                desc11.replace("\n", "").replace("\xa0", "").replace("[", "").replace("]", "").replace(" ", ""))
-
-        for photo1 in soup.findAll('div', class_='details-list__item-title'):
-            desc11 = (photo1.get_text().replace(" ", ""))
-            desc11 = desc11.replace("\n", "").replace("\xa0", "").replace(
-                "[", "").replace("]", "").replace(" ", "")
-            try:
-                desc11 = translator.translate(desc11, dest="ru")
-                listdesc1.append(desc11.text)
-            except:
-                print("ошибка при переводе")
-                listdesc1.append(desc11)
-
-        if len(listdesc) > 0:
-            listdesc.pop()
-        for times in soup.findAll('time'):
-            desc12 = times.get('datetime')
-            listdesc.append(desc12)
-        listdesc.append(parlink)
-
         if len(alllinkph) > 0:
+            listdesc = []
+            listdesc1 = ['Название', 'Описание', 'Цена', ]
+            # Получение информации о title  # Получение информации о description
+            for photo in soup.findAll('div', class_='details-list details-list--info'):
+                alllinkph = photo.find(
+                    'script', class_='js-react-on-rails-component').get_text()
+                gettitle = alllinkph.split('"')[7]
+                getdesc = alllinkph.split('"')[11].replace("\\n", ' ')
+                listdesc.append(gettitle)
+                listdesc.append(getdesc)
+            # Получение информации о цене
+            for photo in soup.findAll('div', class_='details-list details-list--main-info'):
+                pricebrand = photo.find(
+                    'script', class_='js-react-on-rails-component').get_text().split('"')[7]
+                listdesc.append(pricebrand)
+            #  #######Получение информации о размепе бренле
+            for photo1 in soup.findAll('div', class_='details-list__item-value'):
+                desc11 = (photo1.get_text().replace(" ", ""))
+                listdesc.append(
+                    desc11.replace("\n", "").replace("\xa0", "").replace("[", "").replace("]", "").replace(" ", ""))
+            for photo1 in soup.findAll('div', class_='details-list__item-title'):
+                desc11 = (photo1.get_text().replace(" ", ""))
+                desc11 = desc11.replace("\n", "").replace("\xa0", "").replace(
+                    "[", "").replace("]", "").replace(" ", "")
+                try:
+                    desc11 = translator.translate(desc11, dest="ru")
+                    listdesc1.append(desc11.text)
+                except:
+                    print("ошибка при переводе")
+                    listdesc1.append(desc11)
+            if len(listdesc) > 0:
+                listdesc.pop()
+            for times in soup.findAll('time'):
+                desc12 = times.get('datetime')
+                listdesc.append(desc12)
+            listdesc.append(parlink)
+
+
             # Создание папки
-            if not os.path.isdir("user-" + str(user_id)):
-                os.makedirs("user-" + str(user_id))
-            my_file = open("user-" + str(user_id) + "/" +
-                           "description.txt", "w+", encoding="utf-8")
+            if not os.path.isdir("user-" + str_id):
+                os.makedirs("user-" + str_id)
+            my_file = open("user-" + str_id + "/" + "description.txt", "w+", encoding="utf-8")
             for listd, listdes in zip(listdesc1, listdesc):
                 my_file.write(listd + ":     " + listdes + "\n\n")
             my_file.close()
             # sendDocument
-            f = open("user-" + str(user_id) + "/" + "description.txt", "rb")
+            f = open("user-" + str_id + "/" + "description.txt", "rb")
             bot.send_document(message.chat.id, f)
-            bot.send_message(
-                message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
             f.close()
-            # Удаления файла
-            path_description = os.path.join(os.path.abspath(
-                os.path.dirname(__file__)), "user-" + str(user_id))
-
-            start(message)
-
-            bot.send_message(id_admin, parlink)
-            bot.send_message(id_admin, user_username)
-            shutil.rmtree(path_description)
 
         else:
-            bot.send_message(
-                message.chat.id, text="Отправь ссылку с товаром", )
-            start(message)
+            bot.send_message(message.chat.id, text="Отправь ссылку с товаром", )
+
 
     elif 'grailed' in parlink:
         browser = webdriver.Chrome()
@@ -414,6 +392,7 @@ def parser(message):
             alllinkph = photo.get('src').split('/')[-1]
             allphoto = photograiled + alllinkph  # Полная ссылка
             bot.send_document(message.chat.id, allphoto)
+
 
         # Title01
         for photo in htmls.findAll('h1', class_='Body_body__H3fQQ Text Details_detail__2HUWw'):
@@ -448,39 +427,40 @@ def parser(message):
         listdesc.append("Ссылка     " + parlink)
 
         if len(allphoto) > 0:
-            if not os.path.isdir("user-" + str(user_id)):
-                os.makedirs("user-" + str(user_id))
+            if not os.path.isdir("user-" + str_id):
+                os.makedirs("user-" + str_id)
                 # Document
-            my_file = open("user-" + str(user_id) + "/" +
+            my_file = open("user-" + str_id + "/" +
                            "description.txt", "w+", encoding="utf-8")
             for listde in listdesc:
                 my_file.write(listde)
             my_file.close()
 
             # sendDocument
-            f = open("user-" + str(user_id) + "/" + "description.txt", "rb")
+            f = open("user-" + str_id + "/" + "description.txt", "rb")
             bot.send_document(message.chat.id, f)
             bot.send_message(
                 message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
             f.close()
-            # Удаления файла
-            path = os.path.join(os.path.abspath(
-                os.path.dirname(__file__)), "user-" + str(user_id))
-            shutil.rmtree(path)
-            start(message)
-
-            bot.send_message(id_admin, parlink)
-            bot.send_message(id_admin, user_username)
 
         else:
             bot.send_message(
                 message.chat.id, text="Отправь ссылку с товаром", )
 
     else:
-        bot.send_message(
-            message.chat.id, text="Отправь боту ссылку из списка..😕😕😕😕😕😕😕😕😕😕😕😕")
-        start(message)
+        bot.send_message(message.chat.id, text="Отправь боту ссылку из списка..😕😕😕😕😕😕😕😕😕😕😕😕")
+
+
     succesfull_pars()
+    bot.send_message(message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
+
+    start(message)
+    # Удаления файла
+    path_description = os.path.join(os.path.abspath(
+        os.path.dirname(__file__)), "user-" + str_id)
+    shutil.rmtree(path_description)
+    bot.send_message(id_admin, parlink)
+    bot.send_message(id_admin, user_username)
 
 
 def newsletter(message):
