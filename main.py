@@ -1,7 +1,6 @@
 from tconfig import *
 import telebot
 from telebot import types
-import googletrans
 import os
 import shutil
 import requests
@@ -40,7 +39,7 @@ bot = telebot.TeleBot(tconfig.token)
 user_id = ''
 alllinkph = ''
 allphoto = ''
-translator = googletrans.Translator()
+
 id_admin = 487176253
 user_username = ''
 str_id = str(user_id)
@@ -302,23 +301,19 @@ def parser(message):
             bot.send_message(message.chat.id, text="Отправь боту ссылку")
             break
 
-    while True:
-        if 'vinted.fr' in parlink:
-            parlink = parlink.replace(".fr", '.com')
 
-            break
-        elif 'vinted.nl' in parlink:
-            parlink = parlink.replace(".nl", '.com')
-        else:
-            break
     if 'vinted' in parlink:
+        llink = 'https://www.vinted.de'
+        parlink = parlink[21:]
+        if not parlink[0] == "/":
+            parlink = parlink[1:]
+        parlink = llink + parlink
         r = requests.get(parlink, headers=HEADERS)
         soup = bs(r.text, 'html.parser')
         bot.send_message(message.chat.id, text="Скачивание началось, подождите")
         for photo in soup.findAll('a', class_='item-thumbnail'):
             global alllinkph
             alllinkph = photo.get('href')
-            print(alllinkph)
             bot.send_document(message.chat.id, alllinkph)
         if len(alllinkph) > 0:
             listdesc = []
@@ -343,21 +338,38 @@ def parser(message):
                     desc11.replace("\n", "").replace("\xa0", "").replace("[", "").replace("]", "").replace(" ", ""))
             for photo1 in soup.findAll('div', class_='details-list__item-title'):
                 desc11 = (photo1.get_text().replace(" ", ""))
-                desc11 = desc11.replace("\n", "").replace("\xa0", "").replace(
-                    "[", "").replace("]", "").replace(" ", "")
-                try:
-                    desc11 = translator.translate(desc11, dest="ru")
-                    listdesc1.append(desc11.text)
-                except:
-                    print("ошибка при переводе")
-                    listdesc1.append(desc11)
+                desc11 = desc11.replace("\n", "").replace("\xa0", "").replace("[", "").replace("]", "").replace(" ", "")
+                listdesc1.append(desc11)
             if len(listdesc) > 0:
                 listdesc.pop()
             for times in soup.findAll('time'):
                 desc12 = times.get('datetime')
                 listdesc.append(desc12)
             listdesc.append(parlink)
+            for i in range(len(listdesc1)):
+                if listdesc1[i] == 'Marke':
+                    listdesc1[i] = 'Бренд'
 
+                if listdesc1[i] == 'Größe':
+                    listdesc1[i] = 'Размер'
+
+                if listdesc1[i] == 'Zustand':
+                    listdesc1[i] = 'Состояние'
+
+                if listdesc1[i] == 'Farbe':
+                    listdesc1[i] = 'Цвет'
+
+                if listdesc1[i] == 'Standort':
+                    listdesc1[i] = 'Местонахождение'
+
+                if listdesc1[i] == 'Bezahlung':
+                    listdesc1[i] = 'Способ оплаты'
+
+                if listdesc1[i] == 'Ansichten':
+                    listdesc1[i] = 'Просмотры'
+
+                if listdesc1[i] == 'Hochgeladen':
+                    listdesc1[i] = 'Загружено'
 
             # Создание папки
             if not os.path.isdir("user-" + str_id):
@@ -455,10 +467,7 @@ def parser(message):
     bot.send_message(message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
 
     start(message)
-    # Удаления файла
-    path_description = os.path.join(os.path.abspath(
-        os.path.dirname(__file__)), "user-" + str_id)
-    shutil.rmtree(path_description)
+
     bot.send_message(id_admin, parlink)
     bot.send_message(id_admin, user_username)
 
