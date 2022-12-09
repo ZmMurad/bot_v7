@@ -47,10 +47,11 @@ str_id = str(user_id)
 
 
 def get_id(message):
-    global user_id, str_id
+    global user_id, str_id, list_ids
     user_id = message.from_user.id
     str_id = str(user_id)
     write_to_json(user_id)
+    list_ids=list(payments_id_user.keys())
 
 
 def write_to_json(user_id):
@@ -59,6 +60,8 @@ def write_to_json(user_id):
             payments_id_user[str_id] = dict()
             payments_id_user[str_id][NAME_PARS_COUNT] = 1
             json.dump(payments_id_user, file)
+            
+            
 
 
 def succesfull_pars():
