@@ -34,6 +34,7 @@ try:
 except:
     payments_id_user = {}
 bot = telebot.TeleBot(tconfig.token)
+list_ids=list(payments_id_user.keys())
 
 
 user_id = ''
