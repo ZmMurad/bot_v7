@@ -11,6 +11,8 @@ import logging
 from datetime import date
 from pyCryptoPayAPI import pyCryptoPayAPI
 import json
+import undetected_chromedriver
+import time
 vakt = date.today()
 client = pyCryptoPayAPI(api_token=TOKEN_CRYPTO)
 # Включить ведение журнала
@@ -392,12 +394,14 @@ def parser(message):
 
 
     elif 'grailed' in parlink:
-        browser = webdriver.Chrome()
-        browser.get(parlink)
+        driver = undetected_chromedriver.Chrome()
+        driver.get(parlink)
         photograiled = 'https://process.fs.grailed.com/AJdAgnqCST4iPtnUxiGtTz/auto_image/cache=expiry:max/rotate=deg:exif/resize=height:2560,width:1440/output=quality:90/compress/'
-        soupselenium = bs(browser.page_source, "html.parser")
-        bot.send_message(
-            message.chat.id, text="Скачивание началось, подождите")
+        time.sleep(17)
+        soupselenium = bs(driver.page_source, "html.parser")
+        bot.send_message(message.chat.id, text="Скачивание началось, подождите")
+        driver.close()
+        driver.quit()
         listdesc = []
         # Получаем код страницы
         for htmls in soupselenium.findAll('html'):
@@ -455,8 +459,6 @@ def parser(message):
             # sendDocument
             f = open("user-" + str_id + "/" + "description.txt", "rb")
             bot.send_document(message.chat.id, f)
-            bot.send_message(
-                message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
             f.close()
 
         else:
