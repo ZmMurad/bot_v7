@@ -34,7 +34,7 @@ try:
 except:
     payments_id_user = {}
 bot = telebot.TeleBot(tconfig.token)
-list_ids=list(payments_id_user.keys())
+list_ids = list(payments_id_user.keys())
 
 
 user_id = ''
@@ -51,7 +51,7 @@ def get_id(message):
     user_id = message.from_user.id
     str_id = str(user_id)
     write_to_json(user_id)
-    list_ids=list(payments_id_user.keys())
+    list_ids = list(payments_id_user.keys())
 
 
 def write_to_json(user_id):
@@ -466,25 +466,18 @@ def parser(message):
     else:
         bot.send_message(message.chat.id, text="Отправь боту ссылку из списка..😕😕😕😕😕😕😕😕😕😕😕😕")
 
-
     succesfull_pars()
     bot.send_message(message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
-
     start(message)
-
     bot.send_message(id_admin, parlink)
     bot.send_message(id_admin, user_username)
+    shutil.rmtree("user-" + str_id)
 
 
 def newsletter(message):
     newsletter = message.text
-    iddis = ['5798499031', '5777884160']
-
-    for iddi in iddis:
-        bot.send_message(iddi, newsletter)
-
-
-print(user_username)
+    for li in list_ids:
+        bot.send_message(li, newsletter)
 
 if __name__ == '__main__':
     bot.polling(none_stop=True)
