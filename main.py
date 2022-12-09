@@ -1,7 +1,6 @@
 from tconfig import *
 import telebot
 from telebot import types
-import googletrans
 import os
 import shutil
 import requests
@@ -35,35 +34,42 @@ try:
 except:
     payments_id_user = {}
 bot = telebot.TeleBot(tconfig.token)
-
+list_ids=list(payments_id_user.keys())
 
 
 user_id = ''
 alllinkph = ''
 allphoto = ''
-translator = googletrans.Translator()
+
 id_admin = 487176253
 user_username = ''
-str_id=str(user_id)
+str_id = str(user_id)
+
+
 def get_id(message):
-    global user_id, str_id
+    global user_id, str_id, list_ids
     user_id = message.from_user.id
-    str_id=str(user_id)
+    str_id = str(user_id)
     write_to_json(user_id)
+    list_ids=list(payments_id_user.keys())
+
 
 def write_to_json(user_id):
-    if str_id not in payments_id_user.keys():       
-        with open("user_db.json","w") as file:          
-            payments_id_user[str_id]=dict()
-            payments_id_user[str_id][NAME_PARS_COUNT]=1
-            json.dump(payments_id_user,file)
+    if str_id not in payments_id_user.keys():
+        with open("user_db.json", "w") as file:
+            payments_id_user[str_id] = dict()
+            payments_id_user[str_id][NAME_PARS_COUNT] = 1
+            json.dump(payments_id_user, file)
+            
+            
 
 
 def succesfull_pars():
     with open("user_db.json", "w") as file:
-        payments_id_user[str_id][NAME_PARS_COUNT]-=1
-        
-        json.dump(payments_id_user,file)
+        payments_id_user[str_id][NAME_PARS_COUNT] -= 1
+
+        json.dump(payments_id_user, file)
+
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -72,45 +78,39 @@ def start(message):
     global str_id
     get_id(message)
     user_username = message.from_user.username
-    
+
     if user_id == id_admin:
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         plus = types.KeyboardButton("+")
         minus = types.KeyboardButton("-")
         newsletter = types.KeyboardButton("Рассылка")
         markup.add(plus, minus, newsletter)
-        bot.send_message(
-            message.chat.id, text="Братишка коро чхе ", reply_markup=markup)
-
+        bot.send_message(message.chat.id, text="Братишка коро чхе ", reply_markup=markup)
     markup = types.InlineKeyboardMarkup(row_width=2)
     balance = types.InlineKeyboardButton("💵Баланс💵 ", callback_data="balance")
-    addbalance = types.InlineKeyboardButton(
-        "💰Пополнить баланс💰", callback_data="addbalance")
+    addbalance = types.InlineKeyboardButton("💰Пополнить баланс💰", callback_data="addbalance")
     parsers = types.InlineKeyboardButton("🌐Парсинг🌐", callback_data="parsers")
     faq = types.InlineKeyboardButton("Задать вопрос❓", callback_data="faq")
     markup.add(balance, addbalance, parsers, faq)
-    bot.send_message(message.chat.id, text="Выберите меню",
-                     reply_markup=markup)
+    bot.send_message(message.chat.id, text="Выберите меню", reply_markup=markup)
 
 
 @bot.callback_query_handler(func=lambda callback: callback.data)
 def check_callback_data(callback):
     get_id(callback)
-    
+
     if callback.data == 'balance':
-        
-        
-        
+
         markup = types.InlineKeyboardMarkup(row_width=2)
         back = types.InlineKeyboardButton(
             "⬅️ Назад в меню", callback_data='back')
         markup.add(back)
-        msg = bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
-                                    text=f'👤 Ваш id:{str_id}   \n\n🔎 Осталось количество поисков:  {payments_id_user[str_id][NAME_PARS_COUNT]}', reply_markup=markup)
-        bot.register_next_step_handler(msg, parser)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+                                    text=f'👤 Ваш id:  {str_id}   \n\n🔎 Осталось количество поисков:  {payments_id_user[str_id][NAME_PARS_COUNT]}', reply_markup=markup)
+
 
     elif callback.data == 'back':
-        
+
         markup = types.InlineKeyboardMarkup(row_width=2)
         balance = types.InlineKeyboardButton(
             "💵Баланс💵 ", callback_data="balance")
@@ -125,28 +125,122 @@ def check_callback_data(callback):
 
     elif callback.data == 'addbalance':
         markup = types.InlineKeyboardMarkup(row_width=2)
-        back = types.InlineKeyboardButton( "⬅️ Назад в меню", callback_data="back")
-        pay10 = types.InlineKeyboardButton("10 поисков - $2", callback_data="pay10")
-        pay20 = types.InlineKeyboardButton("20 поисков - $4", callback_data="pay20")
-        pay30 = types.InlineKeyboardButton("30 поисков - $6", callback_data="pay30")
-        pay40 = types.InlineKeyboardButton("40 поисков - $8", callback_data="pay40")
-        pay50 = types.InlineKeyboardButton("50 поисков - $10", callback_data="pay50")
-
+        back = types.InlineKeyboardButton(
+            "⬅️ Назад в меню", callback_data="back")
+        pay10 = types.InlineKeyboardButton(
+            "10 поисков - $2", callback_data="pay10")
+        pay20 = types.InlineKeyboardButton(
+            "20 поисков - $4", callback_data="pay20")
+        pay30 = types.InlineKeyboardButton(
+            "30 поисков - $6", callback_data="pay30")
+        pay40 = types.InlineKeyboardButton(
+            "40 поисков - $8", callback_data="pay40")
+        pay50 = types.InlineKeyboardButton(
+            "50 поисков - $10", callback_data="pay50")
 
         markup.add(back, pay10, pay20, pay30, pay40, pay50)
-        msg = bot.edit_message_text(chat_id=callback.message.chat.id,  message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
-        bot.register_next_step_handler(msg, parser)
+        bot.edit_message_text(chat_id=callback.message.chat.id,
+                                    message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
+
+
+    elif callback.data == 'pay10':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton(
+            "⬅️ Назад в меню", callback_data="back")
+        btc = types.InlineKeyboardButton("BTC", callback_data="btc")
+        eth = types.InlineKeyboardButton("ЕTH", callback_data="eth")
+        bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
+        usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
+        markup.add(btc, eth, bnb, usdt, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+                              text="Оплата криптовалютой", reply_markup=markup)
+
+    elif callback.data == 'pay20':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton(
+            "⬅️ Назад в меню", callback_data="back")
+        btc = types.InlineKeyboardButton("BTC", callback_data="btc")
+        eth = types.InlineKeyboardButton("ЕTH", callback_data="eth")
+        bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
+        usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
+        markup.add(btc, eth, bnb, usdt, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+                              text="Оплата криптовалютой", reply_markup=markup)
+
+    elif callback.data == 'pay30':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton(
+            "⬅️ Назад в меню", callback_data="back")
+        btc = types.InlineKeyboardButton("BTC", callback_data="btc")
+        eth = types.InlineKeyboardButton("ЕTH", callback_data="eth")
+        bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
+        usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
+        markup.add(btc, eth, bnb, usdt, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+                              text="Оплата криптовалютой", reply_markup=markup)
+
+    elif callback.data == 'pay40':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton(
+            "⬅️ Назад в меню", callback_data="back")
+        btc = types.InlineKeyboardButton("BTC", callback_data="btc")
+        eth = types.InlineKeyboardButton("ЕTH", callback_data="eth")
+        bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
+        usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
+        markup.add(btc, eth, bnb, usdt, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
+                              text="Оплата криптовалютой", reply_markup=markup)
+
+    elif callback.data == 'pay50':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton(
+            "⬅️ Назад в меню", callback_data="back")
+        btc = types.InlineKeyboardButton("BTC", callback_data="btc")
+        eth = types.InlineKeyboardButton("ЕTH", callback_data="eth")
+        bnb = types.InlineKeyboardButton("BNB", callback_data="bnb")
+        usdt = types.InlineKeyboardButton("USDT", callback_data="usdt")
+        markup.add(btc, eth, bnb, usdt, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Оплата криптовалютой", reply_markup=markup)
+
+    elif callback.data == 'btc':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton("❌Отмена❌", callback_data="back")
+        pays = types.InlineKeyboardButton("💵Оплатить💵", url='https://t.me/CryptoBot?start=IV8k5dokl9Az')
+        markup.add(pays, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)
+                              
+    elif callback.data == 'eth':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton("❌Отмена❌", callback_data="back")
+        pays = types.InlineKeyboardButton("💵Оплатить💵", callback_data="pays")
+        markup.add(pays, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)
+
+    elif callback.data == 'bnb':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton("❌Отмена❌", callback_data="back")
+        pays = types.InlineKeyboardButton("💵Оплатить💵", callback_data="pays")
+        markup.add(pays, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)
+
+
+    elif callback.data == 'usdt':
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        back = types.InlineKeyboardButton("❌Отмена❌", callback_data="back")
+        pays = types.InlineKeyboardButton("💵Оплатить💵", callback_data="pays")
+        markup.add(pays, back)
+        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Для оплаты нажмите на кнопку Оплатить.", reply_markup=markup)
 
     elif callback.data == 'parsers':
-        if payments_id_user[str_id][NAME_PARS_COUNT]>0:
+        if payments_id_user[str_id][NAME_PARS_COUNT] > 0:
             markup = types.InlineKeyboardMarkup(row_width=1)
             back = types.InlineKeyboardButton(
                 "⬅️ Назад в меню", callback_data="back")
             markup.add(back)
             bot.edit_message_text(chat_id=callback.message.chat.id,
-                                message_id=callback.message.id, text="Парсинг", reply_markup=markup)
+                                  message_id=callback.message.id, text="Парсинг", reply_markup=markup)
             msg = bot.send_message(chat_id=callback.message.chat.id,
-                                text="Отправь боту ссылку", reply_markup=None)
+                                   text="Отправь боту ссылку", reply_markup=None)
             bot.register_next_step_handler(msg, parser)
         else:
             markup = types.InlineKeyboardMarkup(row_width=1)
@@ -154,20 +248,17 @@ def check_callback_data(callback):
                 "⬅️ Назад в меню", callback_data="back")
             markup.add(back)
             bot.edit_message_text(chat_id=callback.message.chat.id,
-                                message_id=callback.message.id, text="Количество поисков закончилось", reply_markup=markup)
+                                  message_id=callback.message.id, text="Количество поисков закончилось", reply_markup=markup)
             msg = bot.send_message(chat_id=callback.message.chat.id,
-                                text="Количество поисков закончилось", reply_markup=None)
+                                   text="Количество поисков закончилось", reply_markup=None)
 
     elif callback.data == 'faq':
         markup = types.InlineKeyboardMarkup(row_width=2)
-        back = types.InlineKeyboardButton(
-            "⬅️ Назад в меню", callback_data="back")
-        btn_my_site = types.InlineKeyboardButton(
-            text='Перейти', url='https://t.me/Rick_pars')
+        back = types.InlineKeyboardButton( "⬅️ Назад в меню", callback_data="back")
+        btn_my_site = types.InlineKeyboardButton(text='Перейти', url='https://t.me/Rick_pars')
         markup.add(back, btn_my_site)
-        msg = bot.edit_message_text(chat_id=callback.message.chat.id,
+        bot.edit_message_text(chat_id=callback.message.chat.id,
                                     message_id=callback.message.id, text="Написать админу", reply_markup=markup)
-        bot.register_next_step_handler(msg, parser)
 
 
 @bot.message_handler(content_types=['text'])
@@ -206,111 +297,105 @@ def func(message):
 def parser(message):
     while True:
         parlink = message.text
-
+        if "http" not in parlink:
+            parlink = "http://" + parlink
         if parlink.startswith("http"):
             break
         else:
             bot.send_message(message.chat.id, text="Отправь боту ссылку")
             break
 
-    while True:
-        if 'vinted.fr' in parlink:
-            parlink = parlink.replace(".fr", '.com')
 
-            break
-        elif 'vinted.nl' in parlink:
-            parlink = parlink.replace(".nl", '.com')
-        else:
-            break
     if 'vinted' in parlink:
-        if "http" not in parlink:
-            parlink = "http://"+parlink
+        llink = 'https://www.vinted.de'
+        parlink = parlink[21:]
+        if not parlink[0] == "/":
+            parlink = parlink[1:]
+        parlink = llink + parlink
         r = requests.get(parlink, headers=HEADERS)
         soup = bs(r.text, 'html.parser')
-        bot.send_message(
-            message.chat.id, text="Скачивание началось, подождите")
+        bot.send_message(message.chat.id, text="Скачивание началось, подождите")
         for photo in soup.findAll('a', class_='item-thumbnail'):
             global alllinkph
             alllinkph = photo.get('href')
             bot.send_document(message.chat.id, alllinkph)
-
-        listdesc = []
-        listdesc1 = ['Название', 'Описание', 'Цена', ]
-        # Получение информации о title  # Получение информации о description
-        for photo in soup.findAll('div', class_='details-list details-list--info'):
-            alllinkph = photo.find(
-                'script', class_='js-react-on-rails-component').get_text()
-            gettitle = alllinkph.split('"')[7]
-            getdesc = alllinkph.split('"')[11].replace("\\n", ' ')
-            listdesc.append(gettitle)
-            listdesc.append(getdesc)
-
-        # Получение информации о цене
-        for photo in soup.findAll('div', class_='details-list details-list--main-info'):
-            pricebrand = photo.find(
-                'script', class_='js-react-on-rails-component').get_text().split('"')[7]
-            listdesc.append(pricebrand)
-        #  #######Получение информации о размепе бренле
-        for photo1 in soup.findAll('div', class_='details-list__item-value'):
-            desc11 = (photo1.get_text().replace(" ", ""))
-            listdesc.append(
-                desc11.replace("\n", "").replace("\xa0", "").replace("[", "").replace("]", "").replace(" ", ""))
-
-        for photo1 in soup.findAll('div', class_='details-list__item-title'):
-            desc11 = (photo1.get_text().replace(" ", ""))
-            desc11 = desc11.replace("\n", "").replace("\xa0", "").replace(
-                "[", "").replace("]", "").replace(" ", "")
-            try:
-                desc11 = translator.translate(desc11, dest="ru")
-                listdesc1.append(desc11.text)
-            except:
-                print("ошибка при переводе")
-                listdesc1.append(desc11)
-
-        if len(listdesc) > 0:
-            listdesc.pop()
-        for times in soup.findAll('time'):
-            desc12 = times.get('datetime')
-            listdesc.append(desc12)
-        listdesc.append(parlink)
-
         if len(alllinkph) > 0:
+            listdesc = []
+            listdesc1 = ['Название', 'Описание', 'Цена', ]
+            # Получение информации о title  # Получение информации о description
+            for photo in soup.findAll('div', class_='details-list details-list--info'):
+                alllinkph = photo.find(
+                    'script', class_='js-react-on-rails-component').get_text()
+                gettitle = alllinkph.split('"')[7]
+                getdesc = alllinkph.split('"')[11].replace("\\n", ' ')
+                listdesc.append(gettitle)
+                listdesc.append(getdesc)
+            # Получение информации о цене
+            for photo in soup.findAll('div', class_='details-list details-list--main-info'):
+                pricebrand = photo.find(
+                    'script', class_='js-react-on-rails-component').get_text().split('"')[7]
+                listdesc.append(pricebrand)
+            #  #######Получение информации о размепе бренле
+            for photo1 in soup.findAll('div', class_='details-list__item-value'):
+                desc11 = (photo1.get_text().replace(" ", ""))
+                listdesc.append(
+                    desc11.replace("\n", "").replace("\xa0", "").replace("[", "").replace("]", "").replace(" ", ""))
+            for photo1 in soup.findAll('div', class_='details-list__item-title'):
+                desc11 = (photo1.get_text().replace(" ", ""))
+                desc11 = desc11.replace("\n", "").replace("\xa0", "").replace("[", "").replace("]", "").replace(" ", "")
+                listdesc1.append(desc11)
+            if len(listdesc) > 0:
+                listdesc.pop()
+            for times in soup.findAll('time'):
+                desc12 = times.get('datetime')
+                listdesc.append(desc12)
+            listdesc.append(parlink)
+            for i in range(len(listdesc1)):
+                if listdesc1[i] == 'Marke':
+                    listdesc1[i] = 'Бренд'
+
+                if listdesc1[i] == 'Größe':
+                    listdesc1[i] = 'Размер'
+
+                if listdesc1[i] == 'Zustand':
+                    listdesc1[i] = 'Состояние'
+
+                if listdesc1[i] == 'Farbe':
+                    listdesc1[i] = 'Цвет'
+
+                if listdesc1[i] == 'Standort':
+                    listdesc1[i] = 'Местонахождение'
+
+                if listdesc1[i] == 'Bezahlung':
+                    listdesc1[i] = 'Способ оплаты'
+
+                if listdesc1[i] == 'Ansichten':
+                    listdesc1[i] = 'Просмотры'
+
+                if listdesc1[i] == 'Hochgeladen':
+                    listdesc1[i] = 'Загружено'
+
             # Создание папки
-            if not os.path.isdir("user-" + str(user_id)):
-                os.makedirs("user-" + str(user_id))
-            my_file = open("user-" + str(user_id) + "/" +
-                           "description.txt", "w+", encoding="utf-8")
+            if not os.path.isdir("user-" + str_id):
+                os.makedirs("user-" + str_id)
+            my_file = open("user-" + str_id + "/" + "description.txt", "w+", encoding="utf-8")
             for listd, listdes in zip(listdesc1, listdesc):
                 my_file.write(listd + ":     " + listdes + "\n\n")
             my_file.close()
             # sendDocument
-            f = open("user-" + str(user_id) + "/" + "description.txt", "rb")
+            f = open("user-" + str_id + "/" + "description.txt", "rb")
             bot.send_document(message.chat.id, f)
-            bot.send_message(message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
             f.close()
-            # Удаления файла
-            path_description = os.path.join(os.path.abspath(
-                os.path.dirname(__file__)), "user-" + str(user_id))
-            
-            start(message)
-
-            bot.send_message(id_admin, parlink)
-            bot.send_message(id_admin, user_username)
-            shutil.rmtree(path_description)
 
         else:
-            bot.send_message(
-                message.chat.id, text="Отправь ссылку с товаром", )
-            start(message)
+            bot.send_message(message.chat.id, text="Отправь ссылку с товаром", )
+
 
     elif 'grailed' in parlink:
         browser = webdriver.Chrome()
         browser.get(parlink)
         photograiled = 'https://process.fs.grailed.com/AJdAgnqCST4iPtnUxiGtTz/auto_image/cache=expiry:max/rotate=deg:exif/resize=height:2560,width:1440/output=quality:90/compress/'
         soupselenium = bs(browser.page_source, "html.parser")
-
-        if "http" not in parlink:
-            parlink = "http://"+parlink
         bot.send_message(
             message.chat.id, text="Скачивание началось, подождите")
         listdesc = []
@@ -323,6 +408,7 @@ def parser(message):
             alllinkph = photo.get('src').split('/')[-1]
             allphoto = photograiled + alllinkph  # Полная ссылка
             bot.send_document(message.chat.id, allphoto)
+
 
         # Title01
         for photo in htmls.findAll('h1', class_='Body_body__H3fQQ Text Details_detail__2HUWw'):
@@ -357,39 +443,38 @@ def parser(message):
         listdesc.append("Ссылка     " + parlink)
 
         if len(allphoto) > 0:
-            if not os.path.isdir("user-" + str(user_id)):
-                os.makedirs("user-" + str(user_id))
+            if not os.path.isdir("user-" + str_id):
+                os.makedirs("user-" + str_id)
                 # Document
-            my_file = open("user-" + str(user_id) + "/" +
+            my_file = open("user-" + str_id + "/" +
                            "description.txt", "w+", encoding="utf-8")
             for listde in listdesc:
                 my_file.write(listde)
             my_file.close()
 
             # sendDocument
-            f = open("user-" + str(user_id) + "/" + "description.txt", "rb")
+            f = open("user-" + str_id + "/" + "description.txt", "rb")
             bot.send_document(message.chat.id, f)
-            bot.send_message(message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
+            bot.send_message(
+                message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
             f.close()
-            # Удаления файла
-            path = os.path.join(os.path.abspath(
-                os.path.dirname(__file__)), "user-" + str(user_id))
-            shutil.rmtree(path)
-            start(message)
-
-            bot.send_message(id_admin, parlink)
-            bot.send_message(id_admin, user_username)
 
         else:
             bot.send_message(
                 message.chat.id, text="Отправь ссылку с товаром", )
 
     else:
-        bot.send_message(
-            message.chat.id, text="Отправь боту ссылку из списка..😕😕😕😕😕😕😕😕😕😕😕😕")
-        start(message)
+        bot.send_message(message.chat.id, text="Отправь боту ссылку из списка..😕😕😕😕😕😕😕😕😕😕😕😕")
+
+
     succesfull_pars()
-    
+    bot.send_message(message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
+
+    start(message)
+
+    bot.send_message(id_admin, parlink)
+    bot.send_message(id_admin, user_username)
+
 
 def newsletter(message):
     newsletter = message.text
