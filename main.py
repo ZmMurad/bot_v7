@@ -72,6 +72,8 @@ def succesfull_pars():
 
         json.dump(payments_id_user, file)
 
+def add_search_by_admin(id,count_of_search:int):
+    payments_id_user[str(id)][NAME_PARS_COUNT]=count_of_search
 
 @bot.message_handler(commands=['start'])
 def start(message):
