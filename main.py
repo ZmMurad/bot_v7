@@ -69,11 +69,12 @@ def write_to_json(user_id):
 def succesfull_pars():
     with open("user_db.json", "w") as file:
         payments_id_user[str_id][NAME_PARS_COUNT] -= 1
-
         json.dump(payments_id_user, file)
 
 def add_search_by_admin(id,count_of_search:int):
-    payments_id_user[str(id)][NAME_PARS_COUNT]=count_of_search
+    with open("user_db.json", "w") as file:
+        payments_id_user[str(id)][NAME_PARS_COUNT]+=count_of_search
+        json.dump(payments_id_user, file)
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -272,6 +273,8 @@ def func(message):
     if (message.text == "+"):
         if user_id == id_admin:
             bot.send_message(message.chat.id, text="+")
+            plus = bot.send_message(message.chat.id, text="Отправь мне id пользователя")
+            bot.register_next_step_handler(plus, idcoun)
 
         else:
             bot.send_message(
@@ -379,6 +382,8 @@ def parser(message):
                 if listdesc1[i] == 'Hochgeladen':
                     listdesc1[i] = 'Загружено'
 
+            listdesc1.append("Ссылка")
+            listdesc.append(parlink)
             # Создание папки
             if not os.path.isdir("user-" + str_id):
                 os.makedirs("user-" + str_id)
@@ -476,6 +481,25 @@ def parser(message):
     bot.send_message(id_admin, parlink)
     bot.send_message(id_admin, user_username)
     shutil.rmtree("user-" + str_id)
+id = ''
+def idcoun(message):
+    global id
+    id = message.text
+    plus_s = bot.send_message(message.chat.id, text="Сколько добавить поисков?")
+    bot.register_next_step_handler(plus_s, idcouns)
+
+def idcouns(message):
+    count_of_search = message.text
+    count_of_search = int(count_of_search)
+
+    for li in list_ids:
+        if li == count_of_search:
+            add_search_by_admin(id, count_of_search)
+            bot.send_message(message.chat.id, text="Все добавил")
+        else:
+            bot.send_message(message.chat.id, text="Неизвестная ошибка")
+            break
+
 
 
 def newsletter(message):
