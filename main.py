@@ -41,12 +41,11 @@ list_ids = list(payments_id_user.keys())
 
 user_id = ''
 alllinkph = ''
-allphoto = ''
+id = ''
+user_username = ''
 
 id_admin = 487176253
-user_username = ''
 str_id = str(user_id)
-
 
 def get_id(message):
     global user_id, str_id, list_ids
@@ -54,7 +53,6 @@ def get_id(message):
     str_id = str(user_id)
     write_to_json(user_id)
     list_ids = list(payments_id_user.keys())
-
 
 def write_to_json(user_id):
     if str_id not in payments_id_user.keys():
@@ -75,7 +73,13 @@ def add_search_by_admin(id,count_of_search:int):
     with open("user_db.json", "w") as file:
         payments_id_user[str(id)][NAME_PARS_COUNT]+=count_of_search
         json.dump(payments_id_user, file)
-
+def endparser(message, parlink):
+    succesfull_pars()
+    bot.send_message(message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
+    start(message)
+    bot.send_message(id_admin, parlink)
+    bot.send_message(id_admin, user_username)
+    shutil.rmtree("user-" + str_id)
 @bot.message_handler(commands=['start'])
 def start(message):
     global user_id
@@ -252,10 +256,8 @@ def check_callback_data(callback):
             back = types.InlineKeyboardButton(
                 "⬅️ Назад в меню", callback_data="back")
             markup.add(back)
-            bot.edit_message_text(chat_id=callback.message.chat.id,
-                                  message_id=callback.message.id, text="Количество поисков закончилось", reply_markup=markup)
-            msg = bot.send_message(chat_id=callback.message.chat.id,
-                                   text="Количество поисков закончилось", reply_markup=None)
+            bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Количество поисков закончилось", reply_markup=markup)
+
 
     elif callback.data == 'faq':
         markup = types.InlineKeyboardMarkup(row_width=2)
@@ -326,6 +328,7 @@ def parser(message):
             global alllinkph
             alllinkph = photo.get('href')
             bot.send_document(message.chat.id, alllinkph)
+        print(alllinkph)
         if len(alllinkph) > 0:
             listdesc = []
             listdesc1 = ['Название', 'Описание', 'Цена', ]
@@ -376,6 +379,12 @@ def parser(message):
                 if listdesc1[i] == 'Bezahlung':
                     listdesc1[i] = 'Способ оплаты'
 
+                if listdesc1[i] == 'Interessiert':
+                    listdesc1[i] = 'Заинтересованно'
+
+                if listdesc1[i] == 'Maße':
+                    listdesc1[i] = 'Мерка'
+
                 if listdesc1[i] == 'Ansichten':
                     listdesc1[i] = 'Просмотры'
 
@@ -395,9 +404,10 @@ def parser(message):
             f = open("user-" + str_id + "/" + "description.txt", "rb")
             bot.send_document(message.chat.id, f)
             f.close()
-
+            endparser(message, parlink)
         else:
-            bot.send_message(message.chat.id, text="Отправь ссылку с товаром", )
+            bot.send_message(message.chat.id, text="Отправь ссылку с товаром")
+            start(message)
 
 
     elif 'grailed' in parlink:
@@ -419,7 +429,6 @@ def parser(message):
             alllinkph = photo.get('src').split('/')[-1]
             allphoto = photograiled + alllinkph  # Полная ссылка
             bot.send_document(message.chat.id, allphoto)
-
 
         # Title01
         for photo in htmls.findAll('h1', class_='Body_body__H3fQQ Text Details_detail__2HUWw'):
@@ -462,26 +471,17 @@ def parser(message):
             for listde in listdesc:
                 my_file.write(listde)
             my_file.close()
-
             # sendDocument
             f = open("user-" + str_id + "/" + "description.txt", "rb")
             bot.send_document(message.chat.id, f)
             f.close()
-
+            endparser(message, parlink)
         else:
             bot.send_message(
                 message.chat.id, text="Отправь ссылку с товаром", )
-
     else:
         bot.send_message(message.chat.id, text="Отправь боту ссылку из списка..😕😕😕😕😕😕😕😕😕😕😕😕")
 
-    succesfull_pars()
-    bot.send_message(message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
-    start(message)
-    bot.send_message(id_admin, parlink)
-    bot.send_message(id_admin, user_username)
-    shutil.rmtree("user-" + str_id)
-id = ''
 def idcoun(message):
     global id
     id = message.text
@@ -499,8 +499,6 @@ def idcouns(message):
         else:
             bot.send_message(message.chat.id, text="Неизвестная ошибка")
             break
-
-
 
 def newsletter(message):
     newsletter = message.text
