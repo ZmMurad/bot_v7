@@ -13,6 +13,8 @@ from pyCryptoPayAPI import pyCryptoPayAPI
 import json
 import undetected_chromedriver
 import time
+from fake_useragent import UserAgent
+ua = UserAgent(verify_ssl=False)
 vakt = date.today()
 client = pyCryptoPayAPI(api_token=TOKEN_CRYPTO)
 # Включить ведение журнала
@@ -27,7 +29,7 @@ client = pyCryptoPayAPI(api_token=TOKEN_CRYPTO)
 
 HEADERS = {
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.124 YaBrowser/22.9.5.710 Yowser/2.5 Safari/537.36'
+    'user-agent': ua.chrome
 }
 
 try:
@@ -41,12 +43,11 @@ list_ids = list(payments_id_user.keys())
 
 user_id = ''
 alllinkph = ''
-allphoto = ''
+id = ''
+user_username = ''
 
 id_admin = 487176253
-user_username = ''
 str_id = str(user_id)
-
 
 def get_id(message):
     global user_id, str_id, list_ids
@@ -54,7 +55,6 @@ def get_id(message):
     str_id = str(user_id)
     write_to_json(user_id)
     list_ids = list(payments_id_user.keys())
-
 
 def write_to_json(user_id):
     if str_id not in payments_id_user.keys():
@@ -75,7 +75,13 @@ def add_search_by_admin(id,count_of_search:int):
     with open("user_db.json", "w") as file:
         payments_id_user[str(id)][NAME_PARS_COUNT]+=count_of_search
         json.dump(payments_id_user, file)
-
+def endparser(message, parlink):
+    succesfull_pars()
+    bot.send_message(message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
+    start(message)
+    bot.send_message(id_admin, parlink)
+    bot.send_message(id_admin, user_username)
+    shutil.rmtree("user-" + str_id)
 @bot.message_handler(commands=['start'])
 def start(message):
     global user_id
@@ -105,7 +111,6 @@ def check_callback_data(callback):
     get_id(callback)
 
     if callback.data == 'balance':
-
         markup = types.InlineKeyboardMarkup(row_width=2)
         back = types.InlineKeyboardButton(
             "⬅️ Назад в меню", callback_data='back')
@@ -113,9 +118,7 @@ def check_callback_data(callback):
         bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id,
                                     text=f'👤 Ваш id:  {str_id}   \n\n🔎 Осталось количество поисков:  {payments_id_user[str_id][NAME_PARS_COUNT]}', reply_markup=markup)
 
-
     elif callback.data == 'back':
-
         markup = types.InlineKeyboardMarkup(row_width=2)
         balance = types.InlineKeyboardButton(
             "💵Баланс💵 ", callback_data="balance")
@@ -252,10 +255,8 @@ def check_callback_data(callback):
             back = types.InlineKeyboardButton(
                 "⬅️ Назад в меню", callback_data="back")
             markup.add(back)
-            bot.edit_message_text(chat_id=callback.message.chat.id,
-                                  message_id=callback.message.id, text="Количество поисков закончилось", reply_markup=markup)
-            msg = bot.send_message(chat_id=callback.message.chat.id,
-                                   text="Количество поисков закончилось", reply_markup=None)
+            bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.id, text="Количество поисков закончилось", reply_markup=markup)
+
 
     elif callback.data == 'faq':
         markup = types.InlineKeyboardMarkup(row_width=2)
@@ -326,6 +327,7 @@ def parser(message):
             global alllinkph
             alllinkph = photo.get('href')
             bot.send_document(message.chat.id, alllinkph)
+        print(alllinkph)
         if len(alllinkph) > 0:
             listdesc = []
             listdesc1 = ['Название', 'Описание', 'Цена', ]
@@ -376,6 +378,12 @@ def parser(message):
                 if listdesc1[i] == 'Bezahlung':
                     listdesc1[i] = 'Способ оплаты'
 
+                if listdesc1[i] == 'Interessiert':
+                    listdesc1[i] = 'Заинтересованно'
+
+                if listdesc1[i] == 'Maße':
+                    listdesc1[i] = 'Мерка'
+
                 if listdesc1[i] == 'Ansichten':
                     listdesc1[i] = 'Просмотры'
 
@@ -395,10 +403,10 @@ def parser(message):
             f = open("user-" + str_id + "/" + "description.txt", "rb")
             bot.send_document(message.chat.id, f)
             f.close()
-
+            endparser(message, parlink)
         else:
-            bot.send_message(message.chat.id, text="Отправь ссылку с товаром", )
-
+            bot.send_message(message.chat.id, text="Отправь ссылку с товаром")
+            start(message)
 
     elif 'grailed' in parlink:
         driver = undetected_chromedriver.Chrome()
@@ -419,41 +427,38 @@ def parser(message):
             alllinkph = photo.get('src').split('/')[-1]
             allphoto = photograiled + alllinkph  # Полная ссылка
             bot.send_document(message.chat.id, allphoto)
-
-
-        # Title01
-        for photo in htmls.findAll('h1', class_='Body_body__H3fQQ Text Details_detail__2HUWw'):
-            Title01text = photo.get_text()
-            Title01text = "Название:    " + Title01text + "\n\n"
-            listdesc.append(Title01text)
-        # Title
-        listdesc.append("Бренд:    ")
-        for photo in htmls.findAll('a', class_='Designers_designer__IQlyA'):
-            titletext = photo.get_text()
-            listdesc.append(titletext + " × ")
-        # description
-        for photo in htmls.findAll('span', class_='Text SmallTitle_smallTitle__3jj-Q Likes_count__FK3Ep'):
-            liketext = photo.get_text()
-            liketext = "\n\n" + "Лайков:    " + liketext + "\n\n"
-            listdesc.append(liketext)
-        # category
-        for photo in htmls.findAll('p', class_='Body_body__H3fQQ Text Details_detail__2HUWw'):
-            categorytext = photo.get_text()
-            categorytext = categorytext + "\n\n"
-            listdesc.append(categorytext)
-        # price
-        for photo in htmls.findAll('div', class_='Price_root__43cyE ListingPage-MainContent-Item Price_large__2bHW_'):
-            price1 = photo.find(
-                'span', class_='Money_root__2p4sA Price_onSale__k3GL9').get_text()
-            price2 = photo.find(
-                'span', class_='Money_root__2p4sA Price_original__3xo3H').get_text()
-            price1 = "Цена со скидкой:    " + price1 + "\n\n"
-            price2 = "Цена:    " + price2 + "\n\n"
-            listdesc.append(price1)
-            listdesc.append(price2)
-        listdesc.append("Ссылка     " + parlink)
-
-        if len(allphoto) > 0:
+        if len(alllinkph) > 0:
+            # Title01
+            for photo in htmls.findAll('h1', class_='Body_body__H3fQQ Text Details_detail__2HUWw'):
+                Title01text = photo.get_text()
+                Title01text = "Название:    " + Title01text + "\n\n"
+                listdesc.append(Title01text)
+            # Title
+            listdesc.append("Бренд:    ")
+            for photo in htmls.findAll('a', class_='Designers_designer__IQlyA'):
+                titletext = photo.get_text()
+                listdesc.append(titletext + " × ")
+            # description
+            for photo in htmls.findAll('span', class_='Text SmallTitle_smallTitle__3jj-Q Likes_count__FK3Ep'):
+                liketext = photo.get_text()
+                liketext = "\n\n" + "Лайков:    " + liketext + "\n\n"
+                listdesc.append(liketext)
+            # category
+            for photo in htmls.findAll('p', class_='Body_body__H3fQQ Text Details_detail__2HUWw'):
+                categorytext = photo.get_text()
+                categorytext = categorytext + "\n\n"
+                listdesc.append(categorytext)
+            # price
+            for photo in htmls.findAll('div', class_='Price_root__43cyE ListingPage-MainContent-Item Price_large__2bHW_'):
+                price1 = photo.find(
+                    'span', class_='Money_root__2p4sA Price_onSale__k3GL9').get_text()
+                price2 = photo.find(
+                    'span', class_='Money_root__2p4sA Price_original__3xo3H').get_text()
+                price1 = "Цена со скидкой:    " + price1 + "\n\n"
+                price2 = "Цена:    " + price2 + "\n\n"
+                listdesc.append(price1)
+                listdesc.append(price2)
+            listdesc.append("Ссылка     " + parlink)
             if not os.path.isdir("user-" + str_id):
                 os.makedirs("user-" + str_id)
                 # Document
@@ -462,26 +467,17 @@ def parser(message):
             for listde in listdesc:
                 my_file.write(listde)
             my_file.close()
-
             # sendDocument
             f = open("user-" + str_id + "/" + "description.txt", "rb")
             bot.send_document(message.chat.id, f)
             f.close()
-
+            endparser(message, parlink)
         else:
             bot.send_message(
                 message.chat.id, text="Отправь ссылку с товаром", )
-
     else:
         bot.send_message(message.chat.id, text="Отправь боту ссылку из списка..😕😕😕😕😕😕😕😕😕😕😕😕")
 
-    succesfull_pars()
-    bot.send_message(message.chat.id, text=f"Осталось поисков: {payments_id_user[str_id][NAME_PARS_COUNT]}")
-    start(message)
-    bot.send_message(id_admin, parlink)
-    bot.send_message(id_admin, user_username)
-    shutil.rmtree("user-" + str_id)
-id = ''
 def idcoun(message):
     global id
     id = message.text
@@ -499,8 +495,6 @@ def idcouns(message):
         else:
             bot.send_message(message.chat.id, text="Неизвестная ошибка")
             break
-
-
 
 def newsletter(message):
     newsletter = message.text
