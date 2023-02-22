@@ -16,14 +16,14 @@ import time
 vakt = date.today()
 client = pyCryptoPayAPI(api_token=TOKEN_CRYPTO)
 # Включить ведение журнала
-logging.basicConfig(
-    filename='log/' + str(vakt) + '.log',
-    filemode='a',
-    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
-    datefmt='%H:%M:%S',
-    level=logging.DEBUG)
-logging.info("Running Urban Planning")
-logger = logging.getLogger('urbanGUI')
+# logging.basicConfig(
+#     filename='log/' + str(vakt) + '.log',
+#     filemode='a',
+#     format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+#     datefmt='%H:%M:%S',
+#     level=logging.DEBUG)
+# logging.info("Running Urban Planning")
+# logger = logging.getLogger('urbanGUI')
 
 HEADERS = {
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
